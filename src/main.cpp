@@ -2,6 +2,22 @@
 #include <glfw/glfw3.h>
 #include <iostream>
 
+#define WIDTH 800
+#define HEIGHT 600
+
+void glfwWindowSizeCallback(GLFWwindow *window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
+
+void glfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+}
+
 int main()
 {
     if (!glfwInit())
@@ -21,18 +37,28 @@ int main()
         glfwTerminate();
         return -1;
     }
+
+    glfwWindowHint(GL_MAJOR_VERSION, 4);
+    glfwWindowHint(GL_MINOR_VERSION, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    glfwSetWindowSizeCallback(pWindow, glfwWindowSizeCallback);
+    glfwSetKeyCallback(pWindow, glfwKeyCallback);
+
     glfwMakeContextCurrent(pWindow);
+
     if (!gladLoadGL())
     {
         std::cout << "Cannot load glad." << std::endl;
         return -1;
     }
 
-    glfwWindowHint(GL_MAJOR_VERSION, 4);
-    glfwWindowHint(GL_MINOR_VERSION, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+    // std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
 
     glClearColor(1, 1, 0, 1);
+
     while (!glfwWindowShouldClose(pWindow))
     {
         glClear(GL_COLOR_BUFFER_BIT);
@@ -40,7 +66,7 @@ int main()
         glfwPollEvents();
     }
 
-    glfwSetWindowShouldClose(pWindow, false);
+    glfwSetWindowShouldClose(pWindow, GL_TRUE);
     glfwTerminate();
     std::cout << "Hello!\n";
     return 0;
